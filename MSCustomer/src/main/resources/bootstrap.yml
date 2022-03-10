@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: ms-customer
+  #config:
+    #import: optional:configserver:http://localhost:8082
+  cloud:
+    config:
+      enabled: true
+      uri: http://localhost:8082
