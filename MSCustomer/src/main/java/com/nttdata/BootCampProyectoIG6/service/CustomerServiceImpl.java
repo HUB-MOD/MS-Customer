@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+import java.util.function.Function;
+
 @Service
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
@@ -16,29 +19,33 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     CustomerRepository customerRepository;
 
+//    Function<Customer, Mono<Void>> f = deleteCustomer -> customerRepository.delete(deleteCustomer);
+
     @Override
-    public Mono<Customer> createCust(Customer c) {
-        return customerRepository.save(c);
+    public Mono<Customer> createCustomer(Mono<Customer> customerMono) {
+        return customerMono.flatMap(customerRepository::insert).log();
     }
 
     @Override
-    public Mono<Customer> findByCustId(String id) {
+    public Mono<Customer> findByCustomerId(String id) {
         return customerRepository.findById(id);
     }
 
     @Override
-    public Flux<Customer> findAllCust() {
-        return customerRepository.findAll();
+    public Flux<Customer> findAllCustomer() {
+        return customerRepository.findAll().delayElements(Duration.ofSeconds(1)).log();
     }
 
     @Override
-    public Mono<Customer> updateCust(Customer c) {
+    public Mono<Customer> updateCustomer(Customer c) {
         return customerRepository.save(c);
     }
 
     @Override
-    public Mono<Void> deleteCust(String id) {
-        return customerRepository.deleteById(id);
+    public Mono<Customer> deleteCustomer(String id) {
+        return customerRepository.findById(id)
+                .flatMap(deleteCustomer -> customerRepository.delete(deleteCustomer)
+                .then(Mono.just(deleteCustomer)));
     }
 
 }

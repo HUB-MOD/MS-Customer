@@ -23,34 +23,34 @@ public class CustomerController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<Customer> createCust(@RequestBody Customer customer){
-        return customerService.createCust(customer);
+    public Mono<Customer> createCustomer(@RequestBody Mono<Customer> customer){
+        return customerService.createCustomer(customer);
     }
 
     @GetMapping(value = "/getAll", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @ResponseStatus
+    @ResponseStatus(HttpStatus.OK)
     public Flux<Customer> findAll(){
-        return customerService.findAllCust();
+        return customerService.findAllCustomer();
     }
 
     @GetMapping("/{id}")
     @ResponseStatus
     public ResponseEntity<Mono<Customer>> findById(@PathVariable("id") String id){
-        Mono<Customer> customerMono = customerService.findByCustId(id);
+        Mono<Customer> customerMono = customerService.findByCustomerId(id);
         return new ResponseEntity<Mono<Customer>>(customerMono, customerMono !=null? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
     @PutMapping("/update")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<Mono<Customer>> updateCust(@RequestBody Customer customer){
-        Mono<Customer> customerMono = customerService.updateCust(customer);
+        Mono<Customer> customerMono = customerService.updateCustomer(customer);
         return new ResponseEntity<Mono<Customer>>(customerMono, customerMono!=null? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Mono<Void> deleteCust(@PathVariable("id") String id){
-        return customerService.deleteCust(id);
+    public Mono<Customer> deleteCust(@PathVariable("id") String id){
+        return customerService.deleteCustomer(id);
     }
 
 }
